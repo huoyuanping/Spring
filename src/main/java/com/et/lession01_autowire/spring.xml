@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd"> 
+  
+  <bean id="a1" class="com.et.lession01_autowire.A">
+  	<property name="name" value="张三"></property>
+  </bean>
+<!-- 自动装配 将当前实例中所有的对象的属性 ，全部进行填充 
+	bytype对象属性 所在的类 在容器中只能有一个实例
+	byName根据当前对象属性的名称来查找对应的实例
+	多个单实例是相对的如不b中是个集合可以自动装配
+-->
+ <bean id="b" class="com.et.lession01_autowire.B" autowire="byType">
+ 
+ 	
+ </bean>
+ 
+
+</beans>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+   <!-- A a =new A()属性的注入
+   a.setName("aa");普通属性的依赖 (基本的数据类型)
+   value值适合基本数据类型 数字 日期
+   ref表示对象的引用
+   property标签实际调用setName指定的首字母大小的方法
+    -->
+  <bean id="a1" class="com.et.lession01.A">
+  	<property name="name" value="张三"></property>
+  </bean>
+
+ <bean id="b" class="com.et.lession01.B">
+ 	<property name="a" ref="a1"></property>
+ </bean>
+ 
+ <!-- 构造器注入
+ index从索引开始
+ name名字
+ type类型
+  -->
+ <bean id="c" class="com.et.lession01_ioc_di.C">
+  	<constructor-arg name="id" value="1"></constructor-arg>
+  	<constructor-arg name="name" value="李四"></constructor-arg>
+  	<constructor-arg name="b" ref="b"></constructor-arg>
+  </bean>
+</beans>

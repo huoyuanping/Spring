@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.2.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+           ">
+ <!-- 扫描 -->
+ <context:component-scan base-package="com.et.lession04"></context:component-scan>
+  <context:property-placeholder location="classpath:/com/et/lession04/jdbc/mysql.properties"/>
+  <!-- 获取数据库连接
+  username是关键字默认读取获取操作系统的的用户名Administrator
+   -->
+ <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+ 	<property name="url" value="${url}"></property>
+ 	<property name="username" value="${username1}"></property>
+    <property name="password" value="${password2}"></property>
+    <property name="driverClassName" value="${driverClass}"></property>
+ </bean>
+ <!-- 事务管理器 不再使用jdbc的commit和roolback 必须使用事务管理器提供 -->
+ <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  <property name="dataSource" ref="dataSource"></property>
+ </bean>
+ <!-- 定义通知 通知的代码spring已经实现  关联上面的事务管理器-->
+ <tx:advice id="myAdvisor" transaction-manager="transactionManager">
+ 	<tx:attributes>
+ 		<tx:method name="update*"/>
+ 		<tx:method name="save*"/>
+ 		<tx:method name="delete*"/>
+ 		<!-- 除了以上三种方法以外的所有 -->
+ 		<tx:method name="*" read-only="true"/>
+ 	</tx:attributes>
+ </tx:advice>
+ <!-- 定义切点 -->
+ <aop:config>
+ 	<aop:pointcut expression="execution(* com.*..*.dao.*.*(..))" id="myPopint"/>
+ 	<aop:advisor advice-ref="myAdvisor" pointcut-ref="myPopint"/>
+ </aop:config>
+ <!-- 封装一些操作的方法 增删改查-->
+ <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+ <!-- 注入数据源 -->
+ 	 <property name="dataSource" ref="dataSource"></property>
+ </bean>
+ 
+
+</beans>

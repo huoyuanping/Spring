@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.2.xsd
+           ">
+    <!-- 自动扫描   -->
+   <context:component-scan base-package="com.et.lession02.mvc">
+   	<!-- spring默认扫描自带注解 比如Controller Service  不希望扫描  排除它
+   	type="assignable" 排除带有指定类的注解
+   	type="annotation" 表示排除带有指定注解的类
+   		<context:exclude-filter type="assignable" expression="com.et.lession02.mvc.controller.MyController"/>
+   	 -->
+   	 <context:include-filter type="annotation" expression="com.et.lession02.mvc.ZhuJie"/>
+   </context:component-scan>
+	  <context:property-placeholder location="classpath:/com/et/lession02/mvc/mysql.properties"/>
+ 
+ 
+ 
+ 
+</beans>

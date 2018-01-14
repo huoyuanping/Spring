@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+  <!-- spring 的生命周期
+  spring中的bean默认都是单实例
+  singleton单例默认值（容器初始化时实例化）
+  prototype多例（getBeans对象 实例化）
+  -->
+  <bean id="a" class="com.et.lession01_prototype.A" scope="">
+  	<property name="name" value="张三"></property>
+  </bean>
+
+</beans>

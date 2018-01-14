@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+          xmlns:tx="http://www.springframework.org/schema/tx"
+             xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.2.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+           ">
+ <!-- 扫描 -->
+ <context:component-scan base-package="com.et.lession04.testm"></context:component-scan>
+  <context:property-placeholder location="classpath:/com/et/lession04/jdbc/mysql.properties"/>
+  <!-- 获取数据库连接
+  username是关键字默认读取获取操作系统的的用户名Administrator
+   -->
+ <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+ 
+ 	<property name="url" value="${url}"></property>
+ 	<property name="username" value="${username1}"></property>
+    <property name="password" value="${password2}"></property>
+    <property name="driverClassName" value="${driverClass}"></property>
+ </bean>
+ <!-- 事务管理器 不再使用jdbc的commit和roolback 必须使用事务管理器提供 -->
+ <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  <property name="dataSource" ref="dataSource"></property>
+ </bean>
+ <!-- 定义通知 通知的代码spring已经实现  关联上面的事务管理器-->
+ <tx:advice id="myAdvisor" transaction-manager="transactionManager">
+ 	<tx:attributes>
+ 	<!-- 
+ 		 propagation="REQUIRED"默认的传播特性，方法和方法之间式父子关系
+ 		 REQUIRED：没有事务就创建事务，有就使用当前事务
+ 		 REQUIRES_NEW：不管父方法是否存在事务，都会新建事务
+ 		 SUPPORTS:父方法存在事务使用当前事务，没有事务就使用jdbc的事务（自动提交）
+ 		 NOT_SUPPORTED：不管父方法是否存在事务都不会使用事务（挂起事务）
+ 		 MANDATORY: 必须在事务环境下运行 父方法没有事务会抛出异常
+ 		 	No existing transaction found for transaction marked with propagation 'mandatory'
+ 		 NEVER：父方法不能存在事务，有事务就抛出异常
+ 		 	Existing transaction found for transaction marked with propagation 'never'
+ 		 
+ 		 spring中默认的隔离级别:isolation="DEFAULT"
+ 		 		<tx:method name="update*" propagation="REQUIRED" isolation="DEFAULT"/>
+ 		 DEFAULT:数据库本身的隔离级别  oracle（读已提交） mysql（可重复读）
+ 		 READ_UNCOMMITTED：spring实现读未提交(产生脏读)
+		 READ_COMMITTED：spring实现读已提交（不可重复读+幻读）
+	   	 REPEATABLE_READ：spring实现可重复读（产生幻读）
+	   	 SERIALIZABLE：spring实现串行化（已解决）效率极低
+	   	 
+	   	 spring事务 运行过程中碰到运行时异常 （自动回滚） 非运行时异常（不会回滚） 
+	   	 rollback-for="java.io.FileNotFoundException" 指定会回滚的非运行时异常
+	   	 no-rollback-for="java.lang.RuntimeException" 指定某些运行时异常抛出时 不会回滚
+	   	 
+	   	 只读事务（除特定的方法以外其他的业务逻辑方法，都不应该操作事务）
+	   	 read-only="true"设置只读事务
+	   	 spring的超时事务 timeout="10" mysql默认10秒自动超时 oracle永不超时
+ 	 -->
+ 		<tx:method name="update*" propagation="REQUIRED" no-rollback-for="java.lang.RuntimeException"/>
+ 		<tx:method name="save*" propagation="REQUIRED"/>
+ 		<tx:method name="delete*"/>
+ 		<!-- 除了以上三种方法以外的所有 -->
+ 		<tx:method name="*" read-only="true"/>
+ 	</tx:attributes>
+ </tx:advice>
+ <!-- 定义切点 -->
+ <aop:config>
+ 	<aop:pointcut expression="execution(* com.*..*.testm.dao.*.*(..))" id="myPopint"/>
+ 	<aop:advisor advice-ref="myAdvisor" pointcut-ref="myPopint"/>
+ </aop:config>
+ <!-- 封装一些操作的方法 增删改查-->
+ <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+ <!-- 注入数据源 -->
+ 	 <property name="dataSource" ref="dataSource"></property>
+ </bean>
+ 
+
+</beans>
